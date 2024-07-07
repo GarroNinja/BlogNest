@@ -9,4 +9,4 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'site.db')
 db = SQLAlchemy(app)
 
-from flaskblog import routes
+from blognest import routes
