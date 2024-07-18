@@ -6,11 +6,15 @@ from blognest import app, db, bcrypt
 from blognest.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from blognest.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
+import pytz
 
 @app.route("/")
 @app.route("/home")
 def home():
-    posts = Post.query.all()
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page,per_page=5)
+    for post in posts:
+        post.date_posted = convert_to_ist(post.date_posted)
     return render_template('home.html', posts=posts)
 
 
@@ -101,9 +105,16 @@ def new_post():
     return render_template('create_post.html', title='New Post',
                            form=form, legend='New Post')
 
+def convert_to_ist(utc_dt):
+    ist = pytz.timezone('Asia/Kolkata')
+    utc_dt = utc_dt.replace(tzinfo=pytz.utc)
+    ist_dt = utc_dt.astimezone(ist)
+    return ist_dt
+
 @app.route("/post/<int:post_id>")
 def post(post_id):
     post = Post.query.get_or_404(post_id)
+    post.date_posted = convert_to_ist(post.date_posted)
     return render_template('post.html', title=post.title, post=post)
 
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
@@ -135,3 +146,14 @@ def delete_post(post_id):
     db.session.commit()
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('home'))
+
+@app.route("/user/<string:username>")
+def user_posts(username):
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(author=user)\
+        .order_by(Post.date_posted.desc())\
+        .paginate(page=page,per_page=5)
+    for post in posts:
+        post.date_posted = convert_to_ist(post.date_posted)
+    return render_template('user_posts.html', posts=posts, user=user)
