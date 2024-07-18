@@ -6,10 +6,14 @@
         <div class="article-metadata">
             <a class="mr-1" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
             <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}&nbsp;&nbsp;{{ post.date_posted.strftime('%H:%M') }}</small>
-            {% if post.author == current_user %}
+            {% if post.author == current_user or current_user.email == 'admin@blognest.com' %}
                 <div>
+                {% if post.author == current_user %}
                     <a class="btn btn-success btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
                     <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModalLong">Delete</button>
+                    {% else %}
+                        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModalLong">Delete</button>
+                {% endif %}
                 </div>
             {% endif %}
         </div>
