@@ -31,10 +31,6 @@ pyinotify==0.9.6
 pyOpenSSL==21.0.0
 pyparsing==2.4.7
 pytz==2022.1
-PyYAML==5.4.1
-requests==2.25.1
-SecretStorage==3.3.1
-simplejson==3.17.6
 SQLAlchemy==2.0.31
 WTForms==3.1.2
 zipp==1.0.0
