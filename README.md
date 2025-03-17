@@ -1,2 +1,2 @@
 # BlogNest
-A blog site built using flask and bootstrap 
+A blog site built while learning flask.
